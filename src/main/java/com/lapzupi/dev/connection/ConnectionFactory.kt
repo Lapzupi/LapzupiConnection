@@ -13,9 +13,12 @@ import java.util.concurrent.TimeUnit
 /**
  * @author sarhatabaot
  */
-abstract class ConnectionFactory {
+abstract class ConnectionFactory(private val poolName: String, private val schemaHistoryName: String, private val baselineVersion: String) {
     private var dataSource: HikariDataSource? = null
     private val logger = LoggerFactory.getLogger(ConnectionFactory::class.java)
+    
+    
+    constructor() : this(poolName = "hikari-connection", schemaHistoryName = "flyway_schema_history", baselineVersion = "0")
     
     /**
      * This may be different with every database type.
@@ -58,15 +61,15 @@ abstract class ConnectionFactory {
     }
     
     protected open fun poolName(): String {
-        return "hikari-connection"
+        return poolName
     }
     
-    protected open fun schemaHistoryName():String {
-        return "flyway_schema_history"
+    protected open fun schemaHistoryName(): String {
+        return schemaHistoryName
     }
 
     protected open fun baselineVersion(): String {
-        return "0"
+        return baselineVersion
     }
     
     //LP
