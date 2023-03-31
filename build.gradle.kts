@@ -20,8 +20,8 @@ repositories {
 dependencies {
     compileOnly(kotlin("stdlib-jdk8"))
     compileOnly("com.zaxxer:HikariCP:5.0.1")
-    compileOnly("org.flywaydb:flyway-core:9.16.0")
-    compileOnly("org.flywaydb:flyway-mysql:9.16.0")
+    compileOnly(libs.flyway.core)
+    compileOnly(libs.flyway.mysql)
 }
 
 java {
