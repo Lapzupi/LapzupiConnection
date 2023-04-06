@@ -90,7 +90,7 @@ abstract class ConnectionFactory(private val poolName: String, private val schem
         }
     }
     
-    abstract val type: String?
+    abstract val type: String
     
     @get:Throws(SQLException::class)
     val connection: Connection
