@@ -1,11 +1,11 @@
 plugins {
     id("java")
     id("maven-publish")
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "1.9.20"
 }
 
 group = "com.lapzupi.dev.connection"
-version = "1.0.2"
+version = "1.0.3"
 
 repositories {
     mavenCentral()
@@ -19,7 +19,7 @@ repositories {
 
 dependencies {
     compileOnly(kotlin("stdlib-jdk8"))
-    compileOnly("com.zaxxer:HikariCP:5.0.1")
+    compileOnly(libs.hikari.cp)
     compileOnly(libs.flyway.core)
     compileOnly(libs.flyway.mysql)
 }
