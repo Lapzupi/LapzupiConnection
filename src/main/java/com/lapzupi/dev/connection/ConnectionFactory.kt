@@ -13,13 +13,21 @@ import java.util.concurrent.TimeUnit
 /**
  * @author sarhatabaot
  */
-abstract class ConnectionFactory(private val poolName: String, private val schemaHistoryName: String, private val baselineVersion: String) {
+abstract class ConnectionFactory(
+    private val poolName: String,
+    private val schemaHistoryName: String,
+    private val baselineVersion: String
+) {
     private var dataSource: HikariDataSource? = null
-    private val logger = LoggerFactory.getLogger(ConnectionFactory::class.java)
-    
-    
-    constructor() : this(poolName = "hikari-connection", schemaHistoryName = "flyway_schema_history", baselineVersion = "0")
-    
+    private val logger by lazy { LoggerFactory.getLogger(ConnectionFactory::class.java) }
+
+
+    constructor() : this(
+        poolName = "hikari-connection",
+        schemaHistoryName = "flyway_schema_history",
+        baselineVersion = "0"
+    )
+
     /**
      * This may be different with every database type.
      *
@@ -30,8 +38,15 @@ abstract class ConnectionFactory(private val poolName: String, private val schem
      * @param username     username
      * @param password     password
      */
-    protected abstract fun configureDatabase(config: HikariConfig, address: String, port: Int, databaseName: String, username: String, password: String)
-    
+    protected abstract fun configureDatabase(
+        config: HikariConfig,
+        address: String,
+        port: Int,
+        databaseName: String,
+        username: String,
+        password: String
+    )
+
     fun init(address: String, port: Int, databaseName: String, username: String, password: String) {
         val config = HikariConfig()
         config.poolName = poolName()
@@ -42,7 +57,7 @@ abstract class ConnectionFactory(private val poolName: String, private val schem
         setProperties(config, properties)
         dataSource = HikariDataSource(config)
         logger.info("Connected to database!")
-    
+
         val flyway = configureFlyway().load()
         try {
             flyway.migrate()
@@ -50,7 +65,7 @@ abstract class ConnectionFactory(private val poolName: String, private val schem
             logger.error("There was a problem migrating to the latest database version. You may experience issues.", e)
         }
     }
-    
+
     protected open fun configureFlyway(): FluentConfiguration {
         //some default settings.
         return Flyway.configure(javaClass.classLoader)
@@ -59,45 +74,30 @@ abstract class ConnectionFactory(private val poolName: String, private val schem
             .baselineVersion(baselineVersion())
             .table(schemaHistoryName())
     }
-    
-    protected open fun poolName(): String {
-        return poolName
-    }
-    
-    protected open fun schemaHistoryName(): String {
-        return schemaHistoryName
-    }
 
-    protected open fun baselineVersion(): String {
-        return baselineVersion
-    }
-    
+    protected open fun poolName() = poolName
+    protected open fun schemaHistoryName() = schemaHistoryName
+    protected open fun baselineVersion() = baselineVersion
+
     //LP
     protected open fun overrideProperties(properties: MutableMap<String, String>) {
         properties.putIfAbsent("socketTimeout", TimeUnit.SECONDS.toMillis(30).toString())
     }
-    
+
     //LP
     protected fun setProperties(config: HikariConfig, properties: Map<String, String>) {
         for ((key, value) in properties) {
             config.addDataSourceProperty(key, value)
         }
     }
-    
+
     fun shutdown() {
-        if (dataSource != null) {
-            dataSource!!.close()
-        }
+        dataSource?.close()
     }
-    
+
     abstract val type: String
-    
+
     @get:Throws(SQLException::class)
     val connection: Connection
-        get() {
-            if (dataSource == null) {
-                throw SQLException("Null data source")
-            }
-            return dataSource!!.connection ?: throw SQLException("Null connection")
-        }
+        get() = requireNotNull(dataSource) { "Data source is not initialized." }.connection
 }

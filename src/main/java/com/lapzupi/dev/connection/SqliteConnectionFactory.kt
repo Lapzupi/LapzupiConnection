@@ -5,14 +5,8 @@ import com.zaxxer.hikari.HikariConfig
 /**
  * @author sarhatabaot
  */
-class SqliteConnectionFactory(databaseFolder: String) : ConnectionFactory() {
-    
-    private val databaseFolder: String
-    
-    init {
-        this.databaseFolder = databaseFolder
-    }
-    
+class SqliteConnectionFactory(private val databaseFolder: String) : ConnectionFactory() {
+
     override fun configureDatabase(config: HikariConfig, address: String, port: Int, databaseName: String, username: String, password: String) {
         config.jdbcUrl = "jdbc:sqlite:plugins/$databaseFolder/$databaseName"
     }
