@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.lapzupi.dev.connection"
-version = "1.1.0"
+version = "1.1.1"
 
 repositories {
     mavenCentral()
