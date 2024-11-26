@@ -1,20 +1,16 @@
 plugins {
     id("java")
     id("maven-publish")
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "2.1.0-RC2"
 }
 
 group = "com.lapzupi.dev.connection"
-version = "1.0.3"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
-    maven(
-            url = "https://repo.papermc.io/repository/maven-public/"
-    )
-    maven(
-            url = "https://oss.sonatype.org/content/groups/public/"
-    )
+    maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://oss.sonatype.org/content/groups/public/")
 }
 
 dependencies {
@@ -26,7 +22,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
